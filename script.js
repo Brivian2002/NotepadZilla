@@ -20,6 +20,7 @@ class NotepadZilla {
         this.setupWelcomeModal();
         this.setupPageNavigation();
         this.setupFAQ();
+        this.setupGoogleForm();
         
         this.updateWordCount();
         this.checkBrowserCompatibility();
@@ -115,12 +116,6 @@ class NotepadZilla {
             this.showSavingStatus();
         });
         
-        // Contact form
-        document.getElementById('contactForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleContactForm();
-        });
-        
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             // Save: Ctrl+S
@@ -199,29 +194,6 @@ class NotepadZilla {
         });
     }
 
-    switchPage(page) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(p => {
-            p.classList.remove('active');
-        });
-        
-        // Show selected page
-        const pageElement = document.getElementById(`${page}-page`);
-        if (pageElement) {
-            pageElement.classList.add('active');
-            
-            // If switching to home page, focus on editor
-            if (page === 'home') {
-                setTimeout(() => {
-                    document.getElementById('richTextEditor').focus();
-                }, 100);
-            }
-            
-            // Update browser history
-            history.pushState({ page }, '', `#${page}`);
-        }
-    }
-
     setupFAQ() {
         document.querySelectorAll('.faq-question').forEach(question => {
             question.addEventListener('click', () => {
@@ -243,6 +215,92 @@ class NotepadZilla {
                 }
             });
         });
+    }
+
+    setupGoogleForm() {
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
+                // Validate form before submission
+                if (!this.validateContactForm()) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Show success message
+                this.showNotification('Your message has been submitted! It will be recorded in our database. Thank you for contacting us.', 'success');
+                
+                // Store form data locally for reference
+                this.storeFormData();
+                
+                // Clear form after 2 seconds
+                setTimeout(() => {
+                    contactForm.reset();
+                }, 2000);
+                
+                return true;
+            });
+        }
+    }
+
+    validateContactForm() {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value.trim();
+        
+        if (!name || !email || !subject || !message) {
+            this.showNotification('Please fill in all required fields', 'error');
+            return false;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            this.showNotification('Please enter a valid email address', 'error');
+            return false;
+        }
+        
+        return true;
+    }
+
+    storeFormData() {
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            subject: document.getElementById('subject').value,
+            message: document.getElementById('message').value.trim(),
+            timestamp: new Date().toISOString()
+        };
+        
+        // Store in localStorage for reference
+        let submissions = JSON.parse(localStorage.getItem('notepadzilla_contact_submissions')) || [];
+        submissions.unshift(formData);
+        if (submissions.length > 50) submissions = submissions.slice(0, 50);
+        localStorage.setItem('notepadzilla_contact_submissions', JSON.stringify(submissions));
+    }
+
+    switchPage(page) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.remove('active');
+        });
+        
+        // Show selected page
+        const pageElement = document.getElementById(`${page}-page`);
+        if (pageElement) {
+            pageElement.classList.add('active');
+            
+            // If switching to home page, focus on editor
+            if (page === 'home') {
+                setTimeout(() => {
+                    document.getElementById('richTextEditor').focus();
+                }, 100);
+            }
+            
+            // Update browser history
+            history.pushState({ page }, '', `#${page}`);
+        }
     }
 
     setupEditor() {
@@ -591,7 +649,7 @@ class NotepadZilla {
     }
 
     exportAsDOCX(title, content) {
-        // Simple DOCX simulation - in production, use a proper library
+        // Simple DOCX simulation
         const docxContent = `Title: ${title}\n\n${this.stripHtml(content)}\n\nExported from NotepadZilla`;
         this.downloadFile(docxContent, `${title}.docx`, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         this.showNotification('Exported as DOCX successfully!', 'success');
@@ -645,7 +703,7 @@ class NotepadZilla {
         
         document.body.appendChild(notification);
         
-        // Remove after 3 seconds
+        // Remove after 4 seconds
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => {
@@ -653,7 +711,7 @@ class NotepadZilla {
                     notification.parentNode.removeChild(notification);
                 }
             }, 300);
-        }, 3000);
+        }, 4000);
     }
 
     showModal(title, content) {
@@ -773,33 +831,6 @@ class NotepadZilla {
     closeWelcomeModal() {
         document.getElementById('welcomeModal').style.display = 'none';
         this.showNotification('Welcome to NotepadZilla! Start typing your notes.', 'info');
-    }
-
-    handleContactForm() {
-        const form = document.getElementById('contactForm');
-        const formData = new FormData(form);
-        
-        // Get form values
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const subject = formData.get('subject');
-        const message = formData.get('message');
-        
-        // Validate form
-        if (!name || !email || !subject || !message) {
-            this.showNotification('Please fill in all required fields', 'error');
-            return;
-        }
-        
-        // In a real application, you would send this data to a server
-        // For demo purposes, we'll just show a success message
-        this.showNotification('Thank you for your message! In a real application, this would be sent to our servers.', 'success');
-        
-        // Reset form
-        form.reset();
-        
-        // Log the message (for demo purposes)
-        console.log('Contact form submitted:', { name, email, subject, message });
     }
 
     getTextPreview(content, maxLength = 100) {
