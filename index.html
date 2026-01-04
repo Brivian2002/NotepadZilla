@@ -255,7 +255,7 @@
                     </ul>
                     
                     <h2>Support</h2>
-                    <p>If you encounter any issues or have suggestions for improvement, please visit our <a href="#" data-page="contact">Contact page</a> to get in touch.</p>
+                    <p>If you encounter any issues or have suggestions for improvement, please use our <a href="#" data-page="contact">Contact form</a> to get in touch.</p>
                     
                     <h2>Credits</h2>
                     <p>NotepadZilla uses the following third-party resources:</p>
@@ -281,7 +281,7 @@
                 
                 <div class="page-header">
                     <h1>Privacy Policy</h1>
-                    <p>Last Updated: January 15, 2024</p>
+                    <p>Last Updated: January 15, 2026</p>
                 </div>
                 
                 <div class="page-content">
@@ -381,7 +381,7 @@
                     
                     <h2>10. Contact Us</h2>
                     <p>If you have any questions about this Privacy Policy, please contact us:</p>
-                    <p><strong>Email:</strong> privacy@notepadzilla.com</p>
+                    <p><strong>Email:</strong> brightsany3000@gmail.com</p>
                     <p><strong>Address:</strong> Privacy Officer, NotepadZilla</p>
                     <p>We will respond to your inquiry within 30 days.</p>
                     
@@ -402,7 +402,7 @@
                 
                 <div class="page-header">
                     <h1>Terms of Service</h1>
-                    <p>Last Updated: January 15, 2024</p>
+                    <p>Last Updated: January 15, 2026</p>
                 </div>
                 
                 <div class="page-content">
@@ -512,7 +512,7 @@
                     
                     <h2>14. Contact Information</h2>
                     <p>If you have any questions about these Terms, please contact us at:</p>
-                    <p><strong>Email:</strong> legal@notepadzilla.com</p>
+                    <p><strong>Email:</strong> brightsany3000@gmail.com</p>
                     
                     <h2>15. Acknowledgment</h2>
                     <p>By using NotepadZilla, you acknowledge that you have read these Terms of Service, understand them, and agree to be bound by them.</p>
@@ -541,7 +541,7 @@
                             <i class="fas fa-envelope"></i>
                             <h3>Email Support</h3>
                             <p>For general inquiries and support:</p>
-                            <p><strong>support@notepadzilla.com</strong></p>
+                            <p><strong>brightsany3000@gmail.com</strong></p>
                             <p>Response time: 24-48 hours</p>
                         </div>
                         
@@ -549,7 +549,7 @@
                             <i class="fas fa-shield-alt"></i>
                             <h3>Privacy Concerns</h3>
                             <p>For privacy-related questions:</p>
-                            <p><strong>privacy@notepadzilla.com</strong></p>
+                            <p><strong>brightsany3000@gmail.com</strong></p>
                             <p>Response time: 48 hours</p>
                         </div>
                         
@@ -557,40 +557,45 @@
                             <i class="fas fa-balance-scale"></i>
                             <h3>Legal Inquiries</h3>
                             <p>For legal and terms of service questions:</p>
-                            <p><strong>legal@notepadzilla.com</strong></p>
+                            <p><strong>brightsany3000@gmail.com</strong></p>
                             <p>Response time: 3-5 business days</p>
                         </div>
                     </div>
                     
                     <h2>Contact Form</h2>
-                    <p>Alternatively, you can use the form below to send us a message:</p>
+                    <p>Alternatively, you can use the form below to send us a message. Your submission will be automatically recorded in our database.</p>
                     
-                    <form id="contactForm" class="contact-form">
+                    <!-- Google Form Integration -->
+                    <form id="contactForm" action="https://docs.google.com/forms/d/e/1FAIpQLSf4Hr1ZAlescxg-LU3-7vAzviaR95NHBG1ayfzAhc5vuSW_aA/formResponse" method="POST" target="_blank">
+                        <!-- Hidden field for project name -->
+                        <input type="hidden" name="entry.1065046570" value="NotepadZilla Contact Form">
+                        
                         <div class="form-group">
                             <label for="name">Your Name *</label>
-                            <input type="text" id="name" name="name" required>
+                            <input type="text" id="name" name="entry.2005620554" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Your Email *</label>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="entry.1045781291" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="subject">Subject *</label>
-                            <select id="subject" name="subject" required>
+                            <select id="subject" name="entry.1166974658" required>
                                 <option value="">Select a subject</option>
-                                <option value="support">Technical Support</option>
-                                <option value="feature">Feature Request</option>
-                                <option value="bug">Bug Report</option>
-                                <option value="privacy">Privacy Concern</option>
-                                <option value="other">Other</option>
+                                <option value="Technical Support">Technical Support</option>
+                                <option value="Feature Request">Feature Request</option>
+                                <option value="Bug Report">Bug Report</option>
+                                <option value="Privacy Concern">Privacy Concern</option>
+                                <option value="General Inquiry">General Inquiry</option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
                             <label for="message">Your Message *</label>
-                            <textarea id="message" name="message" rows="6" required></textarea>
+                            <textarea id="message" name="entry.1166974658" rows="6" required placeholder="Please provide details about your inquiry..."></textarea>
                         </div>
                         
                         <button type="submit" class="btn-submit">
@@ -599,8 +604,8 @@
                     </form>
                     
                     <div class="form-note">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>Note:</strong> This contact form is for demonstration purposes. In a production environment, this would connect to a backend service. For now, please use the email addresses provided above.
+                        <i class="fas fa-database"></i>
+                        <strong>Form Data Collection:</strong> Your contact form submission is securely recorded in our Google Sheets database. We'll use this information to respond to your inquiry and improve our services. All data is handled according to our Privacy Policy.
                     </div>
                     
                     <h2>Frequently Asked Questions</h2>
@@ -631,6 +636,13 @@
                             <button class="faq-question">What happens if I clear my browser data?</button>
                             <div class="faq-answer">
                                 <p>Clearing browser data will delete your notes. We recommend regularly exporting important notes as backups. We're not responsible for data loss due to browser data clearing.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question">How can I contact support?</button>
+                            <div class="faq-answer">
+                                <p>You can use the contact form above or email us directly at brightsany3000@gmail.com. The contact form automatically records submissions to our database for better tracking and response management.</p>
                             </div>
                         </div>
                     </div>
@@ -671,8 +683,8 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 NotepadZilla. All rights reserved. | <a href="#" data-page="terms">Terms of Service</a> | <a href="#" data-page="privacy">Privacy Policy</a></p>
-            <p class="footer-note">Your data is stored locally and never sent to any server.</p>
+            <p>&copy; 2026 NotepadZilla. All rights reserved. | <a href="#" data-page="terms">Terms of Service</a> | <a href="#" data-page="privacy">Privacy Policy</a></p>
+            <p class="footer-note">Your data is stored locally and never sent to any server. Contact form submissions are recorded in our database.</p>
         </div>
     </footer>
 
