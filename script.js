@@ -1,3 +1,9 @@
+/* NotepadZilla - main application logic
+   This is the full, complete JS for the editor and UI behavior.
+   It includes the existing functionality (auto-save, notes list, toolbar, exports)
+   plus small accessibility and theme persistence enhancements.
+*/
+
 class NotepadZilla {
     constructor() {
         this.currentNoteId = 'current_note';
@@ -25,10 +31,15 @@ class NotepadZilla {
         this.updateWordCount();
         this.checkBrowserCompatibility();
         
-        // Apply dark mode if enabled
+        // Apply dark mode if enabled in settings
         if (this.settings.darkMode) {
             document.documentElement.setAttribute('data-theme', 'dark');
-            document.getElementById('toggleDarkMode').innerHTML = '<i class="fas fa-sun"></i>';
+            const toggle = document.getElementById('toggleDarkMode');
+            if (toggle) toggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            const toggle = document.getElementById('toggleDarkMode');
+            if (toggle) toggle.innerHTML = '<i class="fas fa-moon"></i>';
         }
     }
 
@@ -48,13 +59,21 @@ class NotepadZilla {
     }
 
     setupEventListeners() {
-        // Dark mode toggle
-        document.getElementById('toggleDarkMode').addEventListener('click', () => this.toggleDarkMode());
+        // Dark mode toggle (existing)
+        const darkToggle = document.getElementById('toggleDarkMode');
+        if (darkToggle) {
+            darkToggle.addEventListener('click', () => this.toggleDarkMode());
+        }
         
         // Menu toggle for mobile
-        document.getElementById('menuToggle').addEventListener('click', () => {
-            document.querySelector('.nav-links').classList.toggle('show');
-        });
+        const menuToggle = document.getElementById('menuToggle');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                document.querySelector('.nav-links').classList.toggle('show');
+                const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                menuToggle.setAttribute('aria-expanded', String(!expanded));
+            });
+        }
         
         // Close mobile menu when clicking outside
         document.addEventListener('click', (e) => {
@@ -86,13 +105,19 @@ class NotepadZilla {
         });
         
         // Color pickers
-        document.getElementById('textColor').addEventListener('change', (e) => {
-            this.executeCommand('foreColor', e.target.value);
-        });
+        const textColor = document.getElementById('textColor');
+        if (textColor) {
+            textColor.addEventListener('change', (e) => {
+                this.executeCommand('foreColor', e.target.value);
+            });
+        }
         
-        document.getElementById('highlightColor').addEventListener('change', (e) => {
-            this.executeCommand('hiliteColor', e.target.value);
-        });
+        const highlightColor = document.getElementById('highlightColor');
+        if (highlightColor) {
+            highlightColor.addEventListener('change', (e) => {
+                this.executeCommand('hiliteColor', e.target.value);
+            });
+        }
         
         // Action buttons
         document.getElementById('saveNote').addEventListener('click', () => this.saveCurrentNote());
@@ -102,8 +127,10 @@ class NotepadZilla {
         document.getElementById('printNote').addEventListener('click', () => window.print());
         document.getElementById('clearFormatting').addEventListener('click', () => this.clearAllFormatting());
         document.getElementById('toggleFullscreen').addEventListener('click', () => this.toggleFullscreen());
-        document.getElementById('closeSidebar').addEventListener('click', () => this.toggleNotesSidebar());
-        document.getElementById('closeWelcome').addEventListener('click', () => this.closeWelcomeModal());
+        const closeSidebarButton = document.getElementById('closeSidebar');
+        if (closeSidebarButton) closeSidebarButton.addEventListener('click', () => this.toggleNotesSidebar());
+        const closeWelcome = document.getElementById('closeWelcome');
+        if (closeWelcome) closeWelcome.addEventListener('click', () => this.closeWelcomeModal());
         
         // Document title
         document.getElementById('documentTitle').addEventListener('input', () => {
@@ -111,10 +138,20 @@ class NotepadZilla {
         });
         
         // Editor content changes
-        document.getElementById('richTextEditor').addEventListener('input', () => {
-            this.updateWordCount();
-            this.showSavingStatus();
-        });
+        const editorEl = document.getElementById('richTextEditor');
+        if (editorEl) {
+            editorEl.addEventListener('input', () => {
+                this.updateWordCount();
+                this.showSavingStatus();
+            });
+            
+            // Prevent paste of formatting from external sources
+            editorEl.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const text = e.clipboardData.getData('text/plain');
+                document.execCommand('insertText', false, text);
+            });
+        }
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -176,7 +213,7 @@ class NotepadZilla {
 
     setupPageNavigation() {
         // Navigation links
-        document.querySelectorAll('.nav-links a[data-page], .back-link[data-page], .footer-section a[data-page], .footer-bottom a[data-page]').forEach(link => {
+        document.querySelectorAll('.nav-links a[data-page], .back-link[data-page], .footer-section a[data-page]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = link.dataset.page;
@@ -244,10 +281,10 @@ class NotepadZilla {
     }
 
     validateContactForm() {
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value.trim();
+        const name = document.getElementById('name')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const subject = document.getElementById('subject')?.value;
+        const message = document.getElementById('message')?.value.trim();
         
         if (!name || !email || !subject || !message) {
             this.showNotification('Please fill in all required fields', 'error');
@@ -266,10 +303,10 @@ class NotepadZilla {
 
     storeFormData() {
         const formData = {
-            name: document.getElementById('name').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            subject: document.getElementById('subject').value,
-            message: document.getElementById('message').value.trim(),
+            name: document.getElementById('name')?.value.trim(),
+            email: document.getElementById('email')?.value.trim(),
+            subject: document.getElementById('subject')?.value,
+            message: document.getElementById('message')?.value.trim(),
             timestamp: new Date().toISOString()
         };
         
@@ -306,13 +343,9 @@ class NotepadZilla {
     setupEditor() {
         const editor = document.getElementById('richTextEditor');
         
-        // Prevent paste of formatting from external sources
-        editor.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const text = e.clipboardData.getData('text/plain');
-            document.execCommand('insertText', false, text);
-        });
+        if (!editor) return;
         
+        // Prevent paste of formatting from external sources (already attached in setupEventListeners)
         // Update toolbar state on selection change
         editor.addEventListener('mouseup', () => this.updateToolbarState());
         editor.addEventListener('keyup', () => this.updateToolbarState());
@@ -332,7 +365,7 @@ class NotepadZilla {
             }
             
             // Focus back on editor
-            editor.focus();
+            editor && editor.focus();
         } catch (error) {
             console.error(`Error executing command ${command}:`, error);
         }
@@ -340,7 +373,7 @@ class NotepadZilla {
 
     updateToolbarState() {
         const selection = window.getSelection();
-        if (!selection.rangeCount) return;
+        if (!selection || !selection.rangeCount) return;
         
         // Update button states
         document.querySelectorAll('.toolbar-btn[data-command]').forEach(btn => {
@@ -348,6 +381,7 @@ class NotepadZilla {
             try {
                 const isActive = document.queryCommandState(command);
                 btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', String(isActive));
             } catch (error) {
                 // Some commands don't support queryCommandState
             }
@@ -356,12 +390,15 @@ class NotepadZilla {
 
     applyFontSettings() {
         const editor = document.getElementById('richTextEditor');
+        if (!editor) return;
         editor.style.fontFamily = this.settings.fontFamily;
         editor.style.fontSize = this.getFontSizeFromValue(this.settings.fontSize);
         
-        // Apply to select elements
-        document.getElementById('fontSize').value = this.settings.fontSize;
-        document.getElementById('fontFamily').value = this.settings.fontFamily;
+        // Apply to select elements if they exist
+        const fs = document.getElementById('fontSize');
+        const ff = document.getElementById('fontFamily');
+        if (fs) fs.value = this.settings.fontSize;
+        if (ff) ff.value = this.settings.fontFamily;
     }
 
     getFontSizeFromValue(value) {
@@ -462,6 +499,8 @@ class NotepadZilla {
         const notes = JSON.parse(localStorage.getItem(this.notesKey)) || [];
         const notesList = document.getElementById('notesList');
         
+        if (!notesList) return;
+        
         if (notes.length === 0) {
             notesList.innerHTML = `
                 <div class="empty-notes">
@@ -474,8 +513,7 @@ class NotepadZilla {
         
         notesList.innerHTML = notes.map(note => `
             <div class="note-item ${note.id === this.currentNote?.id ? 'active' : ''}" 
-                 data-note-id="${note.id}"
-                 onclick="notepadZilla.loadNoteById('${note.id}')">
+                 data-note-id="${note.id}">
                 <div class="note-title">${this.escapeHtml(note.title)}</div>
                 <div class="note-preview">${this.escapeHtml(note.preview)}</div>
                 <div class="note-meta">
@@ -484,6 +522,11 @@ class NotepadZilla {
                 </div>
             </div>
         `).join('');
+
+        // Attach click handlers
+        notesList.querySelectorAll('.note-item').forEach(item => {
+            item.addEventListener('click', () => this.loadNoteById(item.dataset.noteId));
+        });
     }
 
     loadNoteById(noteId) {
@@ -678,14 +721,17 @@ class NotepadZilla {
     }
 
     showSavingStatus() {
-        document.getElementById('saveStatus').innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Saving...';
+        const el = document.getElementById('saveStatus');
+        if (el) el.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Saving...';
     }
 
     showSavedStatus() {
-        document.getElementById('saveStatus').innerHTML = '<i class="fas fa-check-circle"></i> Saved';
+        const el = document.getElementById('saveStatus');
+        if (el) el.innerHTML = '<i class="fas fa-check-circle"></i> Saved';
         
         setTimeout(() => {
-            document.getElementById('saveStatus').innerHTML = '<i class="fas fa-check-circle"></i> Ready';
+            const el2 = document.getElementById('saveStatus');
+            if (el2) el2.innerHTML = '<i class="fas fa-check-circle"></i> Ready';
         }, 3000);
     }
 
@@ -737,7 +783,7 @@ class NotepadZilla {
         `;
         
         modal.innerHTML = `
-            <div style="background-color: var(--bg-primary); border-radius: var(--radius-lg); padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow-lg);">
+            <div style="background-color: var(--bg-1); border-radius: var(--radius-lg); padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow-lg);">
                 <h2 style="margin-bottom: 1rem; color: var(--text-primary);">${title}</h2>
                 ${content}
                 <button onclick="this.closest('.custom-modal').remove()" 
@@ -774,11 +820,11 @@ class NotepadZilla {
         
         if (isDark) {
             document.documentElement.removeAttribute('data-theme');
-            icon.className = 'fas fa-moon';
+            if (icon) icon.className = 'fas fa-moon';
             this.settings.darkMode = false;
         } else {
             document.documentElement.setAttribute('data-theme', 'dark');
-            icon.className = 'fas fa-sun';
+            if (icon) icon.className = 'fas fa-sun';
             this.settings.darkMode = true;
         }
         
@@ -787,7 +833,11 @@ class NotepadZilla {
     }
 
     toggleNotesSidebar() {
-        document.getElementById('notesSidebar').classList.toggle('open');
+        const sidebar = document.getElementById('notesSidebar');
+        if (!sidebar) return;
+        sidebar.classList.toggle('open');
+        const isOpen = sidebar.classList.contains('open');
+        sidebar.setAttribute('aria-hidden', String(!isOpen));
     }
 
     toggleFullscreen() {
@@ -823,13 +873,21 @@ class NotepadZilla {
         const hasSeenWelcome = localStorage.getItem('notepadzilla_welcome_seen');
         
         if (!hasSeenWelcome) {
-            document.getElementById('welcomeModal').style.display = 'flex';
+            const welcomeModal = document.getElementById('welcomeModal');
+            if (welcomeModal) {
+                welcomeModal.classList.add('show');
+                welcomeModal.setAttribute('aria-hidden', 'false');
+            }
             localStorage.setItem('notepadzilla_welcome_seen', 'true');
         }
     }
 
     closeWelcomeModal() {
-        document.getElementById('welcomeModal').style.display = 'none';
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (welcomeModal) {
+            welcomeModal.classList.remove('show');
+            welcomeModal.setAttribute('aria-hidden', 'true');
+        }
         this.showNotification('Welcome to NotepadZilla! Start typing your notes.', 'info');
     }
 
@@ -913,22 +971,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
 
-// Add CSS for font awesome spinner
-const style = document.createElement('style');
-style.textContent = `
-    .fa-spin {
-        animation: fa-spin 2s linear infinite;
+    // After initialization: wire up some accessibility / persistence enhancements
+
+    // Persist theme using the same settings key if available, otherwise fallback
+    try {
+        const settingsRaw = localStorage.getItem('notepadzilla_settings');
+        if (settingsRaw) {
+            const settings = JSON.parse(settingsRaw);
+            if (settings.darkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('toggleDarkMode') && (document.getElementById('toggleDarkMode').innerHTML = '<i class="fas fa-sun"></i>');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.getElementById('toggleDarkMode') && (document.getElementById('toggleDarkMode').innerHTML = '<i class="fas fa-moon"></i>');
+            }
+        }
+
+        // Mobile menu toggle (extra safety)
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelector('.nav-links');
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => {
+                const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                menuToggle.setAttribute('aria-expanded', String(!expanded));
+                navLinks.classList.toggle('show');
+            });
+        }
+
+        // Touch hint for toolbar buttons (temporary aria-label on touch)
+        document.querySelectorAll('.toolbar-btn[data-label]').forEach(btn=>{
+            btn.addEventListener('touchstart', () => {
+                btn.setAttribute('aria-label', btn.dataset.label);
+                setTimeout(()=>btn.removeAttribute('aria-label'), 1400);
+            });
+        });
+    } catch (err) {
+        console.warn('Post-init enhancements failed', err);
     }
-    
-    @keyframes fa-spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .custom-modal {
-        animation: fadeIn 0.3s ease;
-    }
-`;
-document.head.appendChild(style);
+});
