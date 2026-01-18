@@ -1,34 +1,233 @@
-/* Added design tokens & small improvements (merges with existing rules) */
+/* ---------- Design Tokens & Base ---------- */
 :root{
-  --ui-gap: 12px;
-  --radius-lg: 12px;
-  --shadow-lg: 0 10px 24px rgba(2,6,23,0.35);
-  --focus-ring: 3px solid rgba(37,99,235,0.14);
-  --toolbar-hit: 44px; /* minimum hit target for toolbar buttons */
+    --primary-color: #2563eb;
+    --primary-dark: #1d4ed8;
+    --accent-color: #06b6d4;
+    --accent-2: #10b981;
+    --danger-color: #ef4444;
+
+    --text-primary: #0f1724;
+    --text-secondary: #6b7280;
+
+    --bg-1: #ffffff;
+    --bg-2: #f9fafb;
+    --bg-3: #f3f4f6;
+
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 12px;
+
+    --shadow-sm: 0 1px 2px rgba(2,6,23,0.06);
+    --shadow: 0 8px 24px rgba(2,6,23,0.08);
+    --shadow-lg: 0 10px 24px rgba(2,6,23,0.12);
+
+    --gap: 12px;
+    --container-max: 1200px;
+    --focus-ring: 3px solid rgba(37,99,235,0.14);
+    --toolbar-hit: 44px;
+    --transition: 180ms cubic-bezier(.2,.9,.3,1);
+
+    --font-sans: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --font-mono: 'Roboto Mono', monospace;
 }
 
-/* Improve toolbar hit area and transitions */
+/* Dark overrides */
+body[data-theme="dark"]{
+    --text-primary: #e6eef8;
+    --text-secondary: #94a3b8;
+    --bg-1: #0b1220;
+    --bg-2: #0f1724;
+    --bg-3: #0b1320;
+    --shadow: 0 8px 24px rgba(0,0,0,0.6);
+    --shadow-lg: 0 18px 40px rgba(0,0,0,0.6);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+    margin:0;
+    font-family:var(--font-sans);
+    background:linear-gradient(180deg,var(--bg-2), rgba(0,0,0,0.02));
+    color:var(--text-primary);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.45;
+    transition: color var(--transition), background var(--transition);
+}
+
+/* ---------- Layout ---------- */
+.container{
+    max-width:var(--container-max);
+    margin:0 auto;
+    padding:1rem;
+}
+
+/* Navbar */
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:60;
+    backdrop-filter: blur(6px);
+    display:flex;
+    align-items:center;
+    padding:0.75rem 1rem;
+    background:transparent;
+}
+
+.nav-container{
+    display:flex;
+    align-items:center;
+    gap:var(--gap);
+    width:100%;
+    justify-content:space-between;
+}
+
+.logo{display:flex;align-items:center;gap:0.75rem}
+.logo h1{margin:0;font-weight:600;font-size:1.125rem}
+.logo-highlight{color:var(--primary-color)}
+
+.nav-links{display:flex;align-items:center;gap:0.5rem}
+.nav-links a{
+    color:var(--text-secondary);
+    text-decoration:none;
+    padding:0.45rem 0.6rem;
+    border-radius:8px;
+    transition:all var(--transition);
+    display:inline-flex;
+    gap:0.5rem;
+    align-items:center;
+}
+.nav-links a.active, .nav-links a:hover{
+    color:var(--text-primary);
+    background:rgba(255,255,255,0.02);
+    transform:translateY(-1px);
+}
+
+.menu-toggle{display:none;background:transparent;border:0;color:var(--text-primary);padding:0.5rem;border-radius:8px}
+@media (max-width:900px){ .nav-links{display:none} .menu-toggle{display:inline-flex} }
+
+/* ---------- Editor Layout ---------- */
+.editor-container{
+    display:grid;
+    grid-template-columns: 1fr 340px;
+    gap:1rem;
+    align-items:start;
+    margin-top:1rem;
+}
+@media (max-width:1024px){ .editor-container{grid-template-columns:1fr} }
+
+/* Card */
+.page-content, .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:var(--radius-lg);
+    padding:1rem;
+    box-shadow:var(--shadow-lg);
+    border:1px solid rgba(255,255,255,0.03);
+}
+
+/* ---------- Toolbar ---------- */
+.toolbar{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+    background:transparent;
+    padding:0.5rem;
+    border-radius:10px;
+}
+.toolbar-group{display:flex;gap:6px;align-items:center}
 .toolbar-btn{
-  min-width: var(--toolbar-hit);
-  min-height: var(--toolbar-hit);
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:10px;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+    background:transparent;
+    color:var(--text-secondary);
+    border:1px solid transparent;
+    padding:0.5rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all var(--transition);
+    min-width:var(--toolbar-hit);
+    min-height:var(--toolbar-hit);
 }
 
-.toolbar-btn:focus{
-  outline:none;
-  box-shadow: var(--focus-ring);
+/* hover / focus / active */
+.toolbar-btn:hover{ color:var(--text-primary); transform:translateY(-2px) }
+.toolbar-btn:focus{ outline:none; box-shadow:var(--focus-ring); }
+.toolbar-btn.active{ background:var(--primary-color); color:white; border-color:rgba(255,255,255,0.06) }
+
+/* Divider */
+.divider{ width:1px; height:24px; background:rgba(255,255,255,0.04); margin:0 6px }
+
+/* selects & color pickers */
+select{ padding:0.5rem; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text-primary) }
+.color-picker{ width:32px; height:32px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); }
+
+/* ---------- Document Header ---------- */
+.document-header{ padding:1.25rem; border-bottom:1px solid rgba(255,255,255,0.03); display:flex; gap:1rem; align-items:center; }
+#documentTitle{
+    flex:1; min-width:200px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text-primary);
+    font-size:1.25rem; font-weight:600; padding:0.6rem 0.9rem; border-radius:10px;
 }
+#documentTitle:focus{ box-shadow:var(--focus-ring); border-color:var(--primary-color) }
+.document-status{ display:flex; gap:1rem; color:var(--text-secondary); font-size:0.9rem }
 
-/* Smooth theme transition for interactive UI */
-*{ transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
+/* ---------- Editor ---------- */
+.editor-wrapper{ flex:1; min-height:500px; padding:1rem 1.25rem }
+#richTextEditor{
+    min-height:420px; color:var(--text-primary); font-family:var(--font-sans); font-size:14pt; line-height:1.8;
+    outline:none; padding:1rem; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background:transparent;
+}
+#richTextEditor:focus{ box-shadow:var(--focus-ring); border-color:var(--primary-color) }
+#richTextEditor[data-placeholder]:empty:before{ content:attr(data-placeholder); color:var(--text-secondary); opacity:0.6 }
 
-/* Mobile improvements: show labels for touch users when toolbar wraps */
+/* ---------- Document Footer ---------- */
+.document-footer{ padding:1rem 1.25rem; border-top:1px solid rgba(255,255,255,0.03); display:flex; justify-content:space-between; gap:1rem; align-items:center; flex-wrap:wrap }
+.stats{ display:flex; gap:1rem; color:var(--text-secondary) }
+.btn-small{ background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--text-secondary); padding:0.4rem 0.7rem; border-radius:8px; cursor:pointer }
+
+/* ---------- Sidebar (notes) ---------- */
+.sidebar{
+    position:fixed; right:-400px; top:0; width:350px; height:100vh; background:var(--bg-1); border-left:1px solid rgba(0,0,0,0.04);
+    box-shadow:var(--shadow-lg); transition:right 0.3s ease; z-index:1001; display:flex; flex-direction:column;
+}
+.sidebar.open{ right:0 }
+.sidebar-header{ padding:1.25rem; border-bottom:1px solid rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center }
+.sidebar-content{ flex:1; padding:1rem; overflow-y:auto }
+.note-item{ padding:1rem; border-radius:8px; border:1px solid rgba(0,0,0,0.04); margin-bottom:0.75rem; cursor:pointer }
+.note-item.active{ background:rgba(37,99,235,0.06); border-color:var(--primary-color) }
+
+/* ---------- Modal ---------- */
+.modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1200 }
+.modal.show{ display:flex }
+.modal-content{ background:var(--bg-1); padding:1.25rem; border-radius:var(--radius-lg); max-width:680px; width:92%; box-shadow:var(--shadow-lg) }
+
+/* ---------- Forms / Footer / Pages ---------- */
+/* keep these similar to repository with improved spacing */
+.page-container{ max-width:800px; margin:0 auto; padding:0 1rem }
+.page-content{ background:var(--bg-1); padding:1.5rem; border-radius:var(--radius-lg); box-shadow:var(--shadow); margin-bottom:2rem }
+
+/* footer */
+.footer-content{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem; padding:1.25rem 0 }
+.footer-bottom{ text-align:center; padding:1rem 0; color:var(--text-secondary); border-top:1px solid rgba(0,0,0,0.04) }
+
+/* ---------- Notifications ---------- */
+.notification{ position:fixed; top:20px; right:20px; padding:1rem 1.25rem; border-radius:10px; box-shadow:var(--shadow-lg); display:flex; gap:0.75rem; z-index:10000 }
+
+/* ---------- Responsive ---------- */
+@media (max-width:1024px){
+    .container{ padding:0 1rem }
+    .toolbar{ flex-direction:column; align-items:flex-start }
+    .toolbar-group{ border-right:none; padding-right:0; flex-wrap:wrap }
+}
 @media (max-width:768px){
-  .toolbar{ gap:8px; }
-  .toolbar .toolbar-btn i{ font-size:1rem; }
-  .toolbar .toolbar-btn[data-label]{ padding:0.5rem; }
+    .nav-links{ display:none; position:absolute; top:100%; left:0; width:100%; background:var(--bg-1); flex-direction:column; padding:1rem; box-shadow:var(--shadow); z-index:1001 }
+    .nav-links.show{ display:flex }
+    .menu-toggle{ display:block }
+    .document-header{ flex-direction:column; align-items:flex-start }
+    .editor-container{ grid-template-columns:1fr }
 }
+
+/* Accessibility helpers */
+.sr-only{ position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0 }
