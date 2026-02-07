@@ -27,6 +27,7 @@ class NotepadZilla {
         this.setupPageNavigation();
         this.setupFAQ();
         this.setupGoogleForm();
+        this.applyPageSettings();
         
         this.updateWordCount();
         this.checkBrowserCompatibility();
@@ -41,15 +42,23 @@ class NotepadZilla {
             const toggle = document.getElementById('toggleDarkMode');
             if (toggle) toggle.innerHTML = '<i class="fas fa-moon"></i>';
         }
+        const themeToggle = document.getElementById('toggleDarkMode');
+        if (themeToggle) themeToggle.setAttribute('aria-pressed', String(this.settings.darkMode));
     }
 
     loadSettings() {
-        const settings = JSON.parse(localStorage.getItem(this.settingsKey)) || {
+        const defaults = {
             darkMode: false,
             fontSize: '4',
-            fontFamily: 'Arial, sans-serif',
-            lastActiveNote: null
+            fontFamily: 'Space Grotesk, sans-serif',
+            lastActiveNote: null,
+            lineHeight: '1.4',
+            pageWidth: 'comfort',
+            plainPaste: false,
+            focusMode: false
         };
+        const stored = JSON.parse(localStorage.getItem(this.settingsKey)) || {};
+        const settings = { ...defaults, ...stored };
         
         this.settings = settings;
     }
@@ -82,12 +91,20 @@ class NotepadZilla {
             }
         });
         
-        // Toolbar buttons
+        // Toolbar buttons (commands)
         document.querySelectorAll('.toolbar-btn[data-command]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const command = e.target.closest('.toolbar-btn').dataset.command;
                 this.executeCommand(command);
                 this.updateToolbarState();
+            });
+        });
+
+        // Toolbar buttons (actions)
+        document.querySelectorAll('.toolbar-btn[data-action]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = e.target.closest('.toolbar-btn').dataset.action;
+                this.handleAction(action);
             });
         });
         
@@ -103,6 +120,28 @@ class NotepadZilla {
             this.settings.fontFamily = e.target.value;
             this.saveSettings();
         });
+
+        const blockStyle = document.getElementById('blockStyle');
+        if (blockStyle) {
+            blockStyle.addEventListener('change', (e) => {
+                const block = e.target.value;
+                this.executeCommand('formatBlock', `<${block}>`);
+            });
+        }
+
+        const lineSpacing = document.getElementById('lineSpacing');
+        if (lineSpacing) {
+            lineSpacing.addEventListener('change', (e) => {
+                this.setLineHeight(e.target.value);
+            });
+        }
+
+        const pageWidth = document.getElementById('pageWidth');
+        if (pageWidth) {
+            pageWidth.addEventListener('change', (e) => {
+                this.setPageWidth(e.target.value);
+            });
+        }
         
         // Color pickers
         const textColor = document.getElementById('textColor');
@@ -145,8 +184,9 @@ class NotepadZilla {
                 this.showSavingStatus();
             });
             
-            // Prevent paste of formatting from external sources
+            // Optional plain-text paste mode
             editorEl.addEventListener('paste', (e) => {
+                if (!this.settings.plainPaste) return;
                 e.preventDefault();
                 const text = e.clipboardData.getData('text/plain');
                 document.execCommand('insertText', false, text);
@@ -191,6 +231,13 @@ class NotepadZilla {
             if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
                 e.preventDefault();
                 this.executeCommand('underline');
+                this.updateToolbarState();
+            }
+
+            // Redo: Ctrl+Y or Ctrl+Shift+Z
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) {
+                e.preventDefault();
+                this.executeCommand('redo');
                 this.updateToolbarState();
             }
         });
@@ -265,7 +312,7 @@ class NotepadZilla {
                 }
                 
                 // Show success message
-                this.showNotification('Your message has been submitted! It will be recorded in our database. Thank you for contacting us.', 'success');
+                this.showNotification('Your message has been submitted! It is saved locally in your browser. Thank you for contacting us.', 'success');
                 
                 // Store form data locally for reference
                 this.storeFormData();
@@ -354,6 +401,15 @@ class NotepadZilla {
         this.applyFontSettings();
     }
 
+    applyPageSettings() {
+        document.body.setAttribute('data-page-width', this.settings.pageWidth || 'comfort');
+        document.body.classList.toggle('focus-mode', Boolean(this.settings.focusMode));
+        const pageSelect = document.getElementById('pageWidth');
+        if (pageSelect) pageSelect.value = this.settings.pageWidth || 'comfort';
+        this.setLineHeight(this.settings.lineHeight || '1.4', true);
+        this.updatePasteModeStatus();
+    }
+
     executeCommand(command, value = null) {
         const editor = document.getElementById('richTextEditor');
         
@@ -368,6 +424,34 @@ class NotepadZilla {
             editor && editor.focus();
         } catch (error) {
             console.error(`Error executing command ${command}:`, error);
+        }
+    }
+
+    handleAction(action) {
+        switch (action) {
+            case 'insertLink':
+                this.insertLink();
+                break;
+            case 'insertImage':
+                this.insertImage();
+                break;
+            case 'insertTable':
+                this.insertTable();
+                break;
+            case 'insertDate':
+                this.insertDate();
+                break;
+            case 'toggleChecklist':
+                this.insertChecklist();
+                break;
+            case 'toggleFocus':
+                this.toggleFocusMode();
+                break;
+            case 'togglePlainPaste':
+                this.togglePlainPaste();
+                break;
+            default:
+                break;
         }
     }
 
@@ -388,6 +472,126 @@ class NotepadZilla {
         });
     }
 
+    insertHTML(html) {
+        const editor = document.getElementById('richTextEditor');
+        if (editor) editor.focus();
+        document.execCommand('insertHTML', false, html);
+    }
+
+    insertLink() {
+        const selection = window.getSelection();
+        const selectedText = selection && selection.toString() ? selection.toString() : '';
+        this.showModal('Insert Link', `
+            <div class="modal-form">
+                <label class="modal-label" for="linkUrl">URL</label>
+                <input id="linkUrl" type="url" placeholder="https://example.com" class="modal-input" />
+                <label class="modal-label" for="linkText">Link text</label>
+                <input id="linkText" type="text" placeholder="${selectedText || 'Visit site'}" class="modal-input" />
+                <button class="btn-primary" id="confirmLink">Insert Link</button>
+            </div>
+        `, (modal) => {
+            const urlInput = modal.querySelector('#linkUrl');
+            const textInput = modal.querySelector('#linkText');
+            const confirm = modal.querySelector('#confirmLink');
+            confirm.addEventListener('click', () => {
+                const url = urlInput.value.trim();
+                const text = textInput.value.trim() || selectedText || url;
+                if (!url) {
+                    this.showNotification('Please enter a valid URL', 'error');
+                    return;
+                }
+                if (selectedText) {
+                    document.execCommand('createLink', false, url);
+                } else {
+                    this.insertHTML(`<a href="${this.escapeHtml(url)}" target="_blank" rel="noopener">${this.escapeHtml(text)}</a>`);
+                }
+                modal.remove();
+            });
+        });
+    }
+
+    insertImage() {
+        const uploader = document.getElementById('imageUploader');
+        if (!uploader) return;
+        uploader.value = '';
+        uploader.click();
+        uploader.onchange = () => {
+            const file = uploader.files && uploader.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const src = reader.result;
+                this.insertHTML(`<img src="${src}" alt="Inserted image" style="max-width:100%; height:auto;" />`);
+            };
+            reader.readAsDataURL(file);
+        };
+    }
+
+    insertTable() {
+        this.showModal('Insert Table', `
+            <div class="modal-form">
+                <label class="modal-label" for="tableRows">Rows</label>
+                <input id="tableRows" type="number" min="1" max="10" value="3" class="modal-input" />
+                <label class="modal-label" for="tableCols">Columns</label>
+                <input id="tableCols" type="number" min="1" max="8" value="3" class="modal-input" />
+                <button class="btn-primary" id="confirmTable">Insert Table</button>
+            </div>
+        `, (modal) => {
+            const rowsInput = modal.querySelector('#tableRows');
+            const colsInput = modal.querySelector('#tableCols');
+            const confirm = modal.querySelector('#confirmTable');
+            confirm.addEventListener('click', () => {
+                const rows = Math.max(1, Number(rowsInput.value || 3));
+                const cols = Math.max(1, Number(colsInput.value || 3));
+                let table = '<table><tbody>';
+                for (let r = 0; r < rows; r += 1) {
+                    table += '<tr>';
+                    for (let c = 0; c < cols; c += 1) {
+                        table += '<td> </td>';
+                    }
+                    table += '</tr>';
+                }
+                table += '</tbody></table>';
+                this.insertHTML(table);
+                modal.remove();
+            });
+        });
+    }
+
+    insertDate() {
+        const date = new Date();
+        this.insertHTML(`<span>${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`);
+    }
+
+    insertChecklist() {
+        this.insertHTML('<ul class="checklist"><li><input type="checkbox" /> Checklist item</li></ul>');
+    }
+
+    toggleFocusMode() {
+        const isFocused = document.body.classList.toggle('focus-mode');
+        this.settings.focusMode = isFocused;
+        this.saveSettings();
+    }
+
+    togglePlainPaste() {
+        this.settings.plainPaste = !this.settings.plainPaste;
+        this.saveSettings();
+        this.updatePasteModeStatus();
+        this.showNotification(`Paste mode: ${this.settings.plainPaste ? 'Plain Text' : 'Rich Text'}`, 'info');
+    }
+
+    updatePasteModeStatus() {
+        const status = document.getElementById('pasteMode');
+        const toggle = document.querySelector('[data-action="togglePlainPaste"]');
+        if (status) status.textContent = `Paste: ${this.settings.plainPaste ? 'Plain' : 'Rich'}`;
+        if (toggle) toggle.setAttribute('aria-pressed', String(this.settings.plainPaste));
+    }
+
+    updateLineHeightStatus() {
+        const status = document.getElementById('lineHeightStatus');
+        if (status) status.textContent = `Line: ${this.settings.lineHeight || '1.4'}x`;
+    }
+
     applyFontSettings() {
         const editor = document.getElementById('richTextEditor');
         if (!editor) return;
@@ -399,6 +603,23 @@ class NotepadZilla {
         const ff = document.getElementById('fontFamily');
         if (fs) fs.value = this.settings.fontSize;
         if (ff) ff.value = this.settings.fontFamily;
+    }
+
+    setLineHeight(value, skipSave = false) {
+        document.documentElement.style.setProperty('--page-line-height', value);
+        const lineSelect = document.getElementById('lineSpacing');
+        if (lineSelect) lineSelect.value = value;
+        this.settings.lineHeight = value;
+        if (!skipSave) this.saveSettings();
+        this.updateLineHeightStatus();
+    }
+
+    setPageWidth(value) {
+        document.body.setAttribute('data-page-width', value);
+        const pageSelect = document.getElementById('pageWidth');
+        if (pageSelect) pageSelect.value = value;
+        this.settings.pageWidth = value;
+        this.saveSettings();
     }
 
     getFontSizeFromValue(value) {
@@ -760,7 +981,7 @@ class NotepadZilla {
         }, 4000);
     }
 
-    showModal(title, content) {
+    showModal(title, content, onReady = null) {
         // Remove existing modal
         const existingModal = document.querySelector('.custom-modal');
         if (existingModal) existingModal.remove();
@@ -787,13 +1008,16 @@ class NotepadZilla {
                 <h2 style="margin-bottom: 1rem; color: var(--text-primary);">${title}</h2>
                 ${content}
                 <button onclick="this.closest('.custom-modal').remove()" 
-                        style="margin-top: 1.5rem; width: 100%; padding: 0.75rem; background-color: var(--border-color); border: none; border-radius: var(--radius); cursor: pointer; color: var(--text-primary);">
+                        style="margin-top: 1.5rem; width: 100%; padding: 0.75rem; background-color: rgba(15,23,36,0.08); border: none; border-radius: var(--radius); cursor: pointer; color: var(--text-primary);">
                     Cancel
                 </button>
             </div>
         `;
         
         document.body.appendChild(modal);
+        if (onReady) {
+            onReady(modal);
+        }
     }
 
     startAutoSave() {
@@ -817,6 +1041,7 @@ class NotepadZilla {
     toggleDarkMode() {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const icon = document.querySelector('#toggleDarkMode i');
+        const toggle = document.getElementById('toggleDarkMode');
         
         if (isDark) {
             document.documentElement.removeAttribute('data-theme');
@@ -827,6 +1052,7 @@ class NotepadZilla {
             if (icon) icon.className = 'fas fa-sun';
             this.settings.darkMode = true;
         }
+        if (toggle) toggle.setAttribute('aria-pressed', String(!isDark));
         
         this.saveSettings();
         this.showNotification(`Dark mode ${isDark ? 'disabled' : 'enabled'}`, 'info');

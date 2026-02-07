@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <!-- Google AdSense - kept exactly as in repository -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7744791430316817"
@@ -20,9 +20,9 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body data-theme="dark">
+<body>
     <!-- AMP Auto Ads (AdSense) - kept as-is -->
     <amp-auto-ads type="adsense"
         data-ad-client="ca-pub-7744791430316817">
@@ -61,97 +61,191 @@
             <div class="editor-container">
                 <!-- Toolbar with MS Word-like features -->
                 <div class="toolbar" role="toolbar" aria-label="Editor toolbar">
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="bold" title="Bold (Ctrl+B)" data-label="Bold" aria-pressed="false">
-                            <i class="fas fa-bold"></i>
-                        </button>
-                        <button class="toolbar-btn" data-command="italic" title="Italic (Ctrl+I)" data-label="Italic" aria-pressed="false">
-                            <i class="fas fa-italic"></i>
-                        </button>
-                        <button class="toolbar-btn" data-command="underline" title="Underline (Ctrl+U)" data-label="Underline" aria-pressed="false">
-                            <i class="fas fa-underline"></i>
-                        </button>
-                        <button class="toolbar-btn" data-command="strikeThrough" title="Strikethrough" data-label="Strikethrough" aria-pressed="false">
-                            <i class="fas fa-strikethrough"></i>
-                        </button>
-                        <div class="divider" aria-hidden="true"></div>
-                        <select class="font-family" id="fontFamily" aria-label="Font family">
-                            <option value="Arial, sans-serif">Arial</option>
-                            <option value="'Times New Roman', serif">Times New Roman</option>
-                            <option value="'Courier New', monospace">Courier New</option>
-                            <option value="Georgia, serif">Georgia</option>
-                            <option value="Verdana, sans-serif">Verdana</option>
-                        </select>
-                        <select class="font-size" id="fontSize" aria-label="Font size">
-                            <option value="1">8pt</option>
-                            <option value="2">10pt</option>
-                            <option value="3">12pt</option>
-                            <option value="4" selected>14pt</option>
-                            <option value="5">18pt</option>
-                            <option value="6">24pt</option>
-                            <option value="7">36pt</option>
-                        </select>
+                    <div class="toolbar-row">
+                        <div class="toolbar-group">
+                            <span class="group-label">History</span>
+                            <button class="toolbar-btn" data-command="undo" title="Undo (Ctrl+Z)" data-label="Undo">
+                                <i class="fas fa-rotate-left"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="redo" title="Redo (Ctrl+Y)" data-label="Redo">
+                                <i class="fas fa-rotate-right"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="removeFormat" title="Clear Formatting" data-label="Clear Formatting">
+                                <i class="fas fa-eraser"></i>
+                            </button>
+                        </div>
+
+                        <div class="toolbar-group">
+                            <span class="group-label">Font</span>
+                            <select class="font-family" id="fontFamily" aria-label="Font family">
+                                <option value="Inter, sans-serif">Inter</option>
+                                <option value="Arial, sans-serif">Arial</option>
+                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="'Courier New', monospace">Courier New</option>
+                                <option value="Georgia, serif">Georgia</option>
+                            </select>
+                            <select class="font-size" id="fontSize" aria-label="Font size">
+                                <option value="1">8pt</option>
+                                <option value="2">10pt</option>
+                                <option value="3">12pt</option>
+                                <option value="4" selected>14pt</option>
+                                <option value="5">18pt</option>
+                                <option value="6">24pt</option>
+                                <option value="7">36pt</option>
+                            </select>
+                            <select class="block-style" id="blockStyle" aria-label="Block style">
+                                <option value="P" selected>Paragraph</option>
+                                <option value="H1">Heading 1</option>
+                                <option value="H2">Heading 2</option>
+                                <option value="H3">Heading 3</option>
+                                <option value="BLOCKQUOTE">Quote</option>
+                                <option value="PRE">Code Block</option>
+                            </select>
+                            <button class="toolbar-btn" data-command="bold" title="Bold (Ctrl+B)" data-label="Bold" aria-pressed="false">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="italic" title="Italic (Ctrl+I)" data-label="Italic" aria-pressed="false">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="underline" title="Underline (Ctrl+U)" data-label="Underline" aria-pressed="false">
+                                <i class="fas fa-underline"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="strikeThrough" title="Strikethrough" data-label="Strikethrough" aria-pressed="false">
+                                <i class="fas fa-strikethrough"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="subscript" title="Subscript" data-label="Subscript" aria-pressed="false">
+                                <i class="fas fa-subscript"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="superscript" title="Superscript" data-label="Superscript" aria-pressed="false">
+                                <i class="fas fa-superscript"></i>
+                            </button>
+                            <input type="color" id="textColor" class="color-picker" title="Text Color" value="#0f1724" aria-label="Text color">
+                            <input type="color" id="highlightColor" class="color-picker" title="Highlight Color" value="#fef08a" aria-label="Highlight color">
+                        </div>
                     </div>
 
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="justifyLeft" title="Align Left" data-label="Align Left">
-                            <i class="fas fa-align-left"></i>
-                        </button>
-                        <button class="toolbar-btn" data-command="justifyCenter" title="Align Center" data-label="Align Center">
-                            <i class="fas fa-align-center"></i>
-                        </button>
-                        <button class="toolbar-btn" data-command="justifyRight" title="Align Right" data-label="Align Right">
-                            <i class="fas fa-align-right"></i>
-                        </button>
-                        <button class="toolbar-btn" data-command="justifyFull" title="Justify" data-label="Justify">
-                            <i class="fas fa-align-justify"></i>
-                        </button>
-                        <div class="divider" aria-hidden="true"></div>
-                        <button class="toolbar-btn" data-command="insertUnorderedList" title="Bulleted List" data-label="Bulleted List">
-                            <i class="fas fa-list-ul"></i>
-                        </button>
-                        <button class="toolbar-btn" data-command="insertOrderedList" title="Numbered List" data-label="Numbered List">
-                            <i class="fas fa-list-ol"></i>
-                        </button>
-                        <div class="divider" aria-hidden="true"></div>
-                        <input type="color" id="textColor" class="color-picker" title="Text Color" value="#000000" aria-label="Text color">
-                        <input type="color" id="highlightColor" class="color-picker" title="Highlight Color" value="#ffff00" aria-label="Highlight color">
-                        <button class="toolbar-btn" data-command="removeFormat" title="Clear Formatting" data-label="Clear Formatting">
-                            <i class="fas fa-eraser"></i>
-                        </button>
+                    <div class="toolbar-row">
+                        <div class="toolbar-group">
+                            <span class="group-label">Paragraph</span>
+                            <button class="toolbar-btn" data-command="justifyLeft" title="Align Left" data-label="Align Left">
+                                <i class="fas fa-align-left"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="justifyCenter" title="Align Center" data-label="Align Center">
+                                <i class="fas fa-align-center"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="justifyRight" title="Align Right" data-label="Align Right">
+                                <i class="fas fa-align-right"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="justifyFull" title="Justify" data-label="Justify">
+                                <i class="fas fa-align-justify"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="insertUnorderedList" title="Bulleted List" data-label="Bulleted List">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="insertOrderedList" title="Numbered List" data-label="Numbered List">
+                                <i class="fas fa-list-ol"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="outdent" title="Decrease Indent" data-label="Decrease Indent">
+                                <i class="fas fa-outdent"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="indent" title="Increase Indent" data-label="Increase Indent">
+                                <i class="fas fa-indent"></i>
+                            </button>
+                            <button class="toolbar-btn" data-action="toggleChecklist" title="Checklist" data-label="Checklist">
+                                <i class="fas fa-list-check"></i>
+                            </button>
+                            <select class="line-spacing" id="lineSpacing" aria-label="Line spacing">
+                                <option value="1.2">1.2x</option>
+                                <option value="1.4" selected>1.4x</option>
+                                <option value="1.6">1.6x</option>
+                                <option value="1.8">1.8x</option>
+                                <option value="2">2.0x</option>
+                            </select>
+                        </div>
+
+                        <div class="toolbar-group">
+                            <span class="group-label">Insert</span>
+                            <button class="toolbar-btn" data-action="insertLink" title="Insert Link" data-label="Insert Link">
+                                <i class="fas fa-link"></i>
+                            </button>
+                            <button class="toolbar-btn" data-action="insertImage" title="Insert Image" data-label="Insert Image">
+                                <i class="fas fa-image"></i>
+                            </button>
+                            <button class="toolbar-btn" data-action="insertTable" title="Insert Table" data-label="Insert Table">
+                                <i class="fas fa-table"></i>
+                            </button>
+                            <button class="toolbar-btn" data-command="insertHorizontalRule" title="Insert Horizontal Rule" data-label="Insert Horizontal Rule">
+                                <i class="fas fa-grip-lines"></i>
+                            </button>
+                            <button class="toolbar-btn" data-action="insertDate" title="Insert Date" data-label="Insert Date">
+                                <i class="fas fa-calendar-day"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" id="saveNote" title="Save (Ctrl+S)">
-                            <i class="fas fa-save"></i> Save
-                        </button>
-                        <button class="toolbar-btn" id="newNote" title="New (Ctrl+N)">
-                            <i class="fas fa-file"></i> New
-                        </button>
-                        <button class="toolbar-btn" id="loadNote" title="Load Note">
-                            <i class="fas fa-folder-open"></i> Load
-                        </button>
-                        <button class="toolbar-btn" id="downloadNote" title="Download">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                        <button class="toolbar-btn" id="printNote" title="Print (Ctrl+P)">
-                            <i class="fas fa-print"></i> Print
-                        </button>
+                    <div class="toolbar-row">
+                        <div class="toolbar-group">
+                            <span class="group-label">View</span>
+                            <select class="page-width" id="pageWidth" aria-label="Page width">
+                                <option value="comfort" selected>Comfort</option>
+                                <option value="wide">Wide</option>
+                                <option value="focus">Focus</option>
+                            </select>
+                            <button class="toolbar-btn" data-action="toggleFocus" title="Focus Mode" data-label="Focus Mode">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="toolbar-btn" data-action="togglePlainPaste" title="Paste As Plain Text" data-label="Paste As Plain Text" aria-pressed="false">
+                                <i class="fas fa-text-height"></i>
+                            </button>
+                        </div>
+
+                        <div class="toolbar-group">
+                            <span class="group-label">File</span>
+                            <button class="toolbar-btn" id="saveNote" title="Save (Ctrl+S)">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <button class="toolbar-btn" id="newNote" title="New (Ctrl+N)">
+                                <i class="fas fa-file"></i> New
+                            </button>
+                            <button class="toolbar-btn" id="loadNote" title="Load Note">
+                                <i class="fas fa-folder-open"></i> Load
+                            </button>
+                            <button class="toolbar-btn" id="downloadNote" title="Download">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="toolbar-btn" id="printNote" title="Print (Ctrl+P)">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </div>
                     </div>
                 </div>
 
+                <input type="file" id="imageUploader" accept="image/*" class="sr-only" aria-hidden="true">
+
                 <!-- Document Title -->
                 <div class="document-header">
-                    <input type="text" id="documentTitle" placeholder="Untitled Document" maxlength="100" aria-label="Document title">
-                    <div class="document-status">
-                        <span id="saveStatus"><i class="fas fa-check-circle"></i> Ready</span>
-                        <span class="word-count">Words: <span id="wordCount">0</span></span>
+                    <div class="document-title-block">
+                        <input type="text" id="documentTitle" placeholder="Untitled Document" maxlength="100" aria-label="Document title">
+                        <div class="document-meta">
+                            <span id="saveStatus"><i class="fas fa-check-circle"></i> Ready</span>
+                            <span class="word-count">Words: <span id="wordCount">0</span></span>
+                        </div>
+                    </div>
+                    <div class="document-controls">
+                        <button class="btn-small" id="toggleFullscreen" title="Toggle Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button class="btn-small" id="clearFormatting" title="Clear All Formatting">
+                            <i class="fas fa-broom"></i>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Rich Text Editor -->
                 <div class="editor-wrapper">
-                    <div id="richTextEditor" contenteditable="true" spellcheck="true" data-placeholder="Start typing here... Your document is automatically saved to your browser's local storage." aria-label="Rich text editor"></div>
+                    <div class="page-surface" id="pageSurface">
+                        <div id="richTextEditor" contenteditable="true" spellcheck="true" data-placeholder="Start typing here... Your document is automatically saved to your browser's local storage." aria-label="Rich text editor"></div>
+                    </div>
                 </div>
 
                 <!-- Document Statistics -->
@@ -162,12 +256,8 @@
                         <span><i class="fas fa-clock"></i> Last Saved: <span id="lastSaved">Never</span></span>
                     </div>
                     <div class="editor-actions">
-                        <button class="btn-small" id="toggleFullscreen" title="Toggle Fullscreen">
-                            <i class="fas fa-expand"></i>
-                        </button>
-                        <button class="btn-small" id="clearFormatting" title="Clear All Formatting">
-                            <i class="fas fa-broom"></i>
-                        </button>
+                        <span class="status-pill" id="pasteMode">Paste: Rich</span>
+                        <span class="status-pill" id="lineHeightStatus">Line: 1.4x</span>
                     </div>
                 </div>
             </div>
@@ -241,6 +331,7 @@
                         <li><strong>Dark Mode:</strong> Easy on the eyes with our dark theme option</li>
                         <li><strong>Word Count:</strong> Real-time word and character count</li>
                         <li><strong>Print Support:</strong> Print your notes directly from the browser</li>
+                        <li><strong>Insert Tools:</strong> Tables, links, images, dates, and checklists</li>
                     </ul>
 
                     <h2>Privacy First</h2>
@@ -275,6 +366,19 @@
                     <h2>Support</h2>
                     <p>If you encounter any issues or have suggestions for improvement, please use our <a href="#" data-page="contact">Contact form</a> to get in touch.</p>
 
+                    <h2>Short Blog / News</h2>
+                    <p>Quick tips and guides from the NotepadZilla team:</p>
+                    <ul>
+                        <li>How to Save MTN Data</li>
+                        <li>Best Data Plans in Ghana</li>
+                        <li>How to Avoid Data Drain</li>
+                        <li>iPhone Data Settings</li>
+                        <li>How to Use Mavis Beacon</li>
+                        <li>How to Set Up a Gmail Account</li>
+                        <li>How to Convert a DOCS File into PDF</li>
+                        <li>How to Write a Letter in MS Word</li>
+                    </ul>
+
                     <h2>Credits</h2>
                     <p>NotepadZilla uses the following third-party resources:</p>
                     <ul>
@@ -290,8 +394,130 @@
             </div>
         </div>
 
-        <!-- Privacy, Terms, Contact pages (kept as in repository) -->
-        <!-- ... privacy-page, terms-page, contact-page HTML remains as in the repository ... -->
+        <!-- Privacy Page -->
+        <div id="privacy-page" class="page">
+            <div class="page-container">
+                <a href="#" data-page="home" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Notepad
+                </a>
+
+                <div class="page-header">
+                    <h1>Privacy Policy</h1>
+                    <p>Privacy-first note-taking that stays on your device.</p>
+                </div>
+
+                <div class="page-content">
+                    <h2>Privacy First</h2>
+                    <p>NotepadZilla operates entirely in your browser. Notes are stored locally using your browser's localStorage, and they never leave your device.</p>
+                    <ul>
+                        <li>We never see your notes</li>
+                        <li>Your notes never leave your computer</li>
+                        <li>No account registration required</li>
+                        <li>No data collection or tracking</li>
+                    </ul>
+
+                    <h2>Contact Submissions</h2>
+                    <p>If you use the Contact form, your message is saved locally in your browser so you can keep a record of what was sent. It is not transmitted to any server.</p>
+
+                    <h2>Cookies</h2>
+                    <p>NotepadZilla does not use cookies for tracking. Only essential browser storage is used to save your notes and preferences.</p>
+
+                    <h2>Updates</h2>
+                    <p>This privacy policy may be updated to reflect improvements to the service. Any changes will be posted on this page.</p>
+
+                    <h2>Questions</h2>
+                    <p>For privacy questions, contact <a href="mailto:brightsany3000@gmail.com">brightsany3000@gmail.com</a> or call +233535343490.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terms Page -->
+        <div id="terms-page" class="page">
+            <div class="page-container">
+                <a href="#" data-page="home" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Notepad
+                </a>
+
+                <div class="page-header">
+                    <h1>Terms &amp; Conditions</h1>
+                    <p>Simple, transparent terms for using NotepadZilla.</p>
+                </div>
+
+                <div class="page-content">
+                    <h2>Acceptance of Terms</h2>
+                    <p>By using NotepadZilla, you agree to these terms. If you do not agree, please do not use the service.</p>
+
+                    <h2>Service Description</h2>
+                    <p>NotepadZilla is a free, browser-based notepad. Notes are stored locally in your browser and are not uploaded to any server.</p>
+
+                    <h2>User Responsibilities</h2>
+                    <ul>
+                        <li>Keep backups of important notes.</li>
+                        <li>Do not use the service for illegal, harmful, or abusive content.</li>
+                        <li>Use the service at your own risk.</li>
+                    </ul>
+
+                    <h2>Availability</h2>
+                    <p>The service is provided “as is” and may be updated, changed, or discontinued at any time without notice.</p>
+
+                    <h2>Limitation of Liability</h2>
+                    <p>NotepadZilla is not responsible for data loss, device issues, or any indirect damages arising from use of the service.</p>
+
+                    <h2>Intellectual Property</h2>
+                    <p>All branding, design, and original content are owned by NotepadZilla. You retain full ownership of your notes.</p>
+
+                    <h2>Contact</h2>
+                    <p>Questions about these terms can be sent to <a href="mailto:brightsany3000@gmail.com">brightsany3000@gmail.com</a> or by phone at +233535343490.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact-page" class="page">
+            <div class="page-container">
+                <a href="#" data-page="home" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Notepad
+                </a>
+
+                <div class="page-header">
+                    <h1>Contact</h1>
+                    <p>Questions, feedback, or suggestions? Reach out anytime.</p>
+                </div>
+
+                <div class="page-content">
+                    <div class="form-note">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <strong>Email:</strong> <a href="mailto:brightsany3000@gmail.com">brightsany3000@gmail.com</a><br>
+                        <strong>Phone:</strong> +233535343490
+                    </div>
+
+                    <form id="contactForm" class="modal-form" aria-label="Contact form">
+                        <label class="modal-label">
+                            Full Name
+                            <input type="text" id="contactName" name="name" required placeholder="Your name" class="modal-input">
+                        </label>
+                        <label class="modal-label">
+                            Email Address
+                            <input type="email" id="contactEmail" name="email" required placeholder="your@email.com" class="modal-input">
+                        </label>
+                        <label class="modal-label">
+                            Subject
+                            <input type="text" id="contactSubject" name="subject" required placeholder="What is this about?" class="modal-input">
+                        </label>
+                        <label class="modal-label">
+                            Message
+                            <textarea id="contactMessage" name="message" rows="5" required placeholder="Write your message here" class="modal-input"></textarea>
+                        </label>
+                        <button type="submit" class="btn-primary">Send Message</button>
+                    </form>
+
+                    <div class="form-note">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Privacy:</strong> Contact submissions are stored locally on your device and are not sent to any server.
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </main>
 
@@ -328,7 +554,7 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 NotepadZilla. All rights reserved. | <a href="#" data-page="terms">Terms of Service</a> | <a href="#" data-page="privacy">Privacy Policy</a></p>
-            <p class="footer-note">Your data is stored locally and never sent to any server. Contact form submissions are recorded in our database.</p>
+            <p class="footer-note">Your data is stored locally and never sent to any server. Contact form submissions are stored locally in your browser.</p>
         </div>
     </footer>
 
